@@ -1,0 +1,74 @@
+# Data Sources Configuration for CERN Knowledge Explorer
+# This configuration will be used in Phase 2 for data ingestion
+
+data_sources:
+  arxiv:
+    name: "ArXiv Physics Papers"
+    enabled: true
+    base_url: "http://export.arxiv.org/api/query"
+    categories:
+      - "hep-ex"    # High Energy Physics - Experiment
+      - "hep-ph"    # High Energy Physics - Phenomenology  
+      - "hep-th"    # High Energy Physics - Theory
+      - "nucl-ex"   # Nuclear Experiment
+      - "nucl-th"   # Nuclear Theory
+      - "physics.acc-ph"  # Accelerator Physics
+    max_results: 1000
+    rate_limit: 3  # requests per second
+    
+  inspire_hep:
+    name: "INSPIRE-HEP Database"
+    enabled: true
+    base_url: "https://inspirehep.net/api"
+    endpoints:
+      literature: "/literature"
+      authors: "/authors"
+      institutions: "/institutions"
+    rate_limit: 5
+    
+  cern_document_server:
+    name: "CERN Document Server"
+    enabled: true
+    base_url: "https://cds.cern.ch"
+    collections:
+      - "CERN-THESIS"
+      - "CERN-PH-EP"
+      - "CERN-PH-TH"
+    rate_limit: 2
+    
+  # Additional sources for future implementation
+  pubmed:
+    name: "PubMed (Physics subset)"
+    enabled: false
+    base_url: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
+    
+  semantic_scholar:
+    name: "Semantic Scholar API"
+    enabled: false
+    base_url: "https://api.semanticscholar.org"
+
+# Data processing settings
+processing:
+  batch_size: 100
+  concurrent_requests: 5
+  retry_attempts: 3
+  backoff_factor: 2.0
+  
+  # Text processing
+  extract_keywords: true
+  min_keyword_length: 3
+  max_keywords_per_paper: 50
+  
+  # Citation analysis
+  extract_citations: true
+  resolve_doi: true
+  
+# Quality filters
+filters:
+  min_abstract_length: 50
+  max_abstract_length: 10000
+  required_fields: ["title", "authors"]
+  exclude_patterns:
+    - "test"
+    - "draft"
+    - "preliminary" 

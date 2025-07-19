@@ -1,0 +1,112 @@
+[
+  {
+    "id": "sample-001",
+    "title": "Observation of Higgs Boson Production in Association with a Top Quark Pair",
+    "abstract": "We report the observation of Higgs boson production in association with a top quark pair (ttH) based on the analysis of proton-proton collision data recorded by the CMS experiment at the Large Hadron Collider at a center-of-mass energy of 13 TeV. The data correspond to an integrated luminosity of 137 fb^-1.",
+    "authors": [
+      {
+        "name": "A. M. Sirunyan",
+        "affiliation": "CERN",
+        "email": "a.sirunyan@cern.ch"
+      },
+      {
+        "name": "A. Tumasyan", 
+        "affiliation": "Yerevan Physics Institute",
+        "email": "a.tumasyan@cern.ch"
+      }
+    ],
+    "institutions": [
+      {
+        "name": "CERN",
+        "country": "Switzerland",
+        "type": "research_laboratory"
+      },
+      {
+        "name": "Yerevan Physics Institute", 
+        "country": "Armenia",
+        "type": "university"
+      }
+    ],
+    "publication_date": "2023-03-15",
+    "journal": "Physical Review Letters",
+    "doi": "10.1103/PhysRevLett.130.111801",
+    "arxiv_id": "2302.07867",
+    "categories": ["hep-ex"],
+    "keywords": ["higgs boson", "top quark", "cms experiment", "lhc"],
+    "citation_count": 42,
+    "download_count": 1256
+  },
+  {
+    "id": "sample-002", 
+    "title": "Search for Dark Matter Produced in Association with a Higgs Boson",
+    "abstract": "A search for dark matter particles produced in association with a Higgs boson is presented. The search uses proton-proton collision data at sqrt(s) = 13 TeV collected with the ATLAS detector at the Large Hadron Collider corresponding to an integrated luminosity of 139 fb^-1.",
+    "authors": [
+      {
+        "name": "G. Aad",
+        "affiliation": "University of Oklahoma", 
+        "email": "g.aad@cern.ch"
+      },
+      {
+        "name": "B. Abbott",
+        "affiliation": "CERN",
+        "email": "b.abbott@cern.ch"
+      }
+    ],
+    "institutions": [
+      {
+        "name": "University of Oklahoma",
+        "country": "United States",
+        "type": "university"
+      },
+      {
+        "name": "CERN",
+        "country": "Switzerland", 
+        "type": "research_laboratory"
+      }
+    ],
+    "publication_date": "2023-02-28",
+    "journal": "Physical Review D",
+    "doi": "10.1103/PhysRevD.107.032008",
+    "arxiv_id": "2211.16386",
+    "categories": ["hep-ex"],
+    "keywords": ["dark matter", "higgs boson", "atlas experiment", "beyond standard model"],
+    "citation_count": 18,
+    "download_count": 892
+  },
+  {
+    "id": "sample-003",
+    "title": "Measurement of the W Boson Mass with the CDF II Detector",
+    "abstract": "We report a measurement of the W boson mass using data corresponding to 8.8 fb^-1 of integrated luminosity collected in proton-antiproton collisions at sqrt(s) = 1.96 TeV with the CDF II detector at the Fermilab Tevatron collider.",
+    "authors": [
+      {
+        "name": "T. A. Aaltonen",
+        "affiliation": "Fermilab",
+        "email": "t.aaltonen@fnal.gov"
+      },
+      {
+        "name": "S. Amerio",
+        "affiliation": "INFN Padova",
+        "email": "s.amerio@pd.infn.it"
+      }
+    ],
+    "institutions": [
+      {
+        "name": "Fermilab",
+        "country": "United States",
+        "type": "research_laboratory"
+      },
+      {
+        "name": "INFN Padova",
+        "country": "Italy",
+        "type": "research_institute"
+      }
+    ],
+    "publication_date": "2022-04-07",
+    "journal": "Science",
+    "doi": "10.1126/science.abk1781",
+    "categories": ["hep-ex"],
+    "keywords": ["w boson", "mass measurement", "cdf experiment", "tevatron"],
+    "citation_count": 324,
+    "download_count": 5673
+  }
+] 
