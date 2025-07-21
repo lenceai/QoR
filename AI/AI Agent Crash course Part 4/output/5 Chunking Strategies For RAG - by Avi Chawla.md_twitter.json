@@ -1,0 +1,65 @@
+{
+  "topic": "5 Chunking Strategies For RAG",
+  "tweets": [
+    {
+      "content": "5 Chunking Strategies For RAG",
+      "is_hook": true,
+      "media_urls": []
+    },
+    {
+      "content": "Chunking is crucial in RAG systems to efficiently process large documents. \ud83d\udcda\nHere's how it fits into the RAG workflow with data stored as vectors, matched for queries, and generating responses:",
+      "is_hook": false,
+      "media_urls": [
+        "https://substack-post-media.s3.amazonaws.com/public/images/6878b8fa-5e74-45a1-9a89-5aab92889126_2366x990.gif"
+      ]
+    },
+    {
+      "content": "Let's break down the 5 essential chunking strategies, starting with **Fixed-size Chunking**.\n\nIt's easy to implement but might disrupt the semantic flow. \ud83d\udccf",
+      "is_hook": false,
+      "media_urls": [
+        "https://substack-post-media.s3.amazonaws.com/public/images/98c422a0-f0e2-457c-a256-4476a56a601f_943x232.png"
+      ]
+    },
+    {
+      "content": "**Semantic Chunking** segments text based on meaning using cosine similarity. \ud83e\udd14\n\nThis helps in maintaining idea integrity, but requires a threshold setting.",
+      "is_hook": false,
+      "media_urls": [
+        "https://substack-post-media.s3.amazonaws.com/public/images/74037e11-362d-4ea2-8ee2-ee85ab013523_963x231.png"
+      ]
+    },
+    {
+      "content": "**Recursive Chunking** uses natural separators and divides large sections.\ud83d\udd0d\n\nThis approach preserves semantic integrity while adding complexity.",
+      "is_hook": false,
+      "media_urls": [
+        "https://substack-post-media.s3.amazonaws.com/public/images/b0e40cc1-996f-48f4-9306-781b112536e4_984x428.png"
+      ]
+    },
+    {
+      "content": "**Document Structure-based Chunking** utilizes existing document structure to set boundaries. \ud83c\udfdb\ufe0f\n\nWhile chunk sizes might vary, this method preserves structural integrity.",
+      "is_hook": false,
+      "media_urls": [
+        "https://substack-post-media.s3.amazonaws.com/public/images/40bdaf3b-601d-4357-bc7f-89b47f812097_1025x663.png"
+      ]
+    },
+    {
+      "content": "Lastly, **LLM-based Chunking** brings semantic accuracy using LLMs. \ud83e\udd16\n\nDespite being computationally demanding, it ensures better semantic coherence.",
+      "is_hook": false,
+      "media_urls": []
+    },
+    {
+      "content": "Chunking optimizes response quality in RAG applications, balancing complexity with performance.\n\nSemantic & LLM chunking provide better coherence but at a higher cost.",
+      "is_hook": false,
+      "media_urls": []
+    },
+    {
+      "content": "Understanding these strategies allows developers to choose the best approach based on resources and desired outcomes for RAG applications.",
+      "is_hook": false,
+      "media_urls": []
+    },
+    {
+      "content": "That's a wrap on chunking strategies in RAG!\n\nFollow for more insights on AI and Engineering!",
+      "is_hook": false,
+      "media_urls": []
+    }
+  ]
+}
