@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CERN Knowledge Explorer v2.0.1 - Ingestion and Vector Indexing Flow</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            font-size: 2.3em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .version-badge { text-align: center; margin-bottom: 30px; }
+        .badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #27ae60, #1e8449);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .mermaid {
+            font-size: 14px;
+            background-color: #fafafa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .section { margin-top: 40px; }
+        .description {
+            margin-top: 20px;
+            line-height: 1.8;
+            font-size: 1.05em;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+        }
+        .component-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .component-title {
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #2980b9;
+            font-size: 1.15em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin: 10px 0;
+        }
+        .feature-card {
+            background: white;
+            border: 2px solid #e3f2fd;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.06);
+        }
+        .feature-card h4 { color: #1976d2; margin-bottom: 8px; }
+        code { background: #f0f3f5; padding: 2px 6px; border-radius: 4px; }
+    </style>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
+            themeVariables: {
+                primaryColor: '#e3f2fd',
+                primaryTextColor: '#1976d2',
+                primaryBorderColor: '#1976d2',
+                lineColor: '#1976d2',
+                secondaryColor: '#e8f5e8',
+                tertiaryColor: '#fff3e0'
+            }
+        });
+    </script>
+    <!--
+        CERN Knowledge Explorer v2.0.1 Flowchart
+        - Ingestion: src/ingestion/pdf_downloader.py (--limit)
+        - Processing: src/processing/vectorizer.py (PDF -> text chunks)
+        - Vector DB: src/processing/vector_db.py (--build/--query, outputs to output/)
+        - Outputs: output/cern_explorer.index, output/cern_explorer_metadata.pkl
+    -->
+    
+</head>
+<body>
+    <div class="container">
+        <h1>CERN Knowledge Explorer v2.0.1</h1>
+        <div class="version-badge">
+            <span class="badge">Ingestion ➜ Vectorization ➜ Search (Outputs in output/)</span>
+        </div>
+
+        <div class="description">
+            <p>This document visualizes the 2.0.1 pipeline for ingesting CERN Courier PDFs, extracting text, building a FAISS index, and querying it. The CLIs are designed for easy use and safe defaults:</p>
+            <ul>
+                <li>Downloader saves PDFs to <code>data/pdfs/</code>; limit via <code>--limit</code>.</li>
+                <li>Vector DB writes <code>cern_explorer.index</code> and <code>cern_explorer_metadata.pkl</code> to <code>output/</code> (configurable via <code>--out-dir</code>).</li>
+                <li>Heavy ML imports are lazy; <code>--help</code> works even if CUDA isn't available.</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Main Flow</h2>
+            <div class="mermaid">
+                graph LR
+                    A["📥 Download PDFs<br/>pdf_downloader.py --limit N"] --> B
+                    B["🧩 Text Extraction & Chunking<br/>vectorizer.py"] --> C
+                    C["🔢 Embedding & Index Build<br/>vector_db.py --build"] --> D
+                    D["💾 Save Index & Metadata<br/>output/cern_explorer.*"] --> E
+                    E["🔎 Query Index<br/>vector_db.py --query '...' --k 5"]
+
+                    style A fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+                    style B fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+                    style C fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+                    style D fill:#fff3e0,stroke:#f57c00,stroke-width:3px
+                    style E fill:#c8e6c9,stroke:#4caf50,stroke-width:3px
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>CLI Quick Reference</h2>
+            <div class="component-box">
+                <div class="component-title">Downloader</div>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>Usage</h4>
+                        <p><code>python src/ingestion/pdf_downloader.py --help</code></p>
+                        <p><code>python src/ingestion/pdf_downloader.py --limit 10</code></p>
+                        <p>Downloads recent CERN Courier PDFs to <code>data/pdfs/</code>.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>Notes</h4>
+                        <ul>
+                            <li>Base URL: <code>https://cerncourier.com/p/magazine/</code></li>
+                            <li>Filters for magazine PDF links only.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="component-box">
+                <div class="component-title">Vector DB</div>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>Build</h4>
+                        <p><code>python src/processing/vector_db.py --build --pdf-dir ./data/pdfs --out-dir ./output</code></p>
+                        <p>Creates FAISS index and metadata under <code>output/</code>.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>Query</h4>
+                        <p><code>python src/processing/vector_db.py --query "quantum mechanics" --k 5 --out-dir ./output</code></p>
+                        <p>Searches the existing index for similar chunks.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>Behavior</h4>
+                        <ul>
+                            <li>Lazy imports for Torch/Sentence-Transformers/FAISS.</li>
+                            <li>Falls back to CPU if CUDA not available.</li>
+                            <li>Default model: <code>all-MiniLM-L6-v2</code>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Artifacts and Paths</h2>
+            <div class="mermaid">
+                graph TD
+                    P1["data/pdfs/<br/>downloaded PDFs"] --> P2
+                    P2["vectorizer.py<br/>chunks (in-memory)"] --> P3
+                    P3["vector_db.py --build"] --> P4["output/cern_explorer.index"]
+                    P3 --> P5["output/cern_explorer_metadata.pkl"]
+                    Q1["vector_db.py --query"] --> P4
+
+                    style P1 fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+                    style P2 fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+                    style P3 fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+                    style P4,P5 fill:#fff3e0,stroke:#f57c00,stroke-width:3px
+                    style Q1 fill:#c8e6c9,stroke:#4caf50,stroke-width:3px
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Pinned Packages (2.0.1)</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Core</h4>
+                    <p><code>requests</code>, <code>beautifulsoup4</code>, <code>PyPDF2</code>, <code>langchain</code>, <code>numpy</code></p>
+                </div>
+                <div class="feature-card">
+                    <h4>ML/NLP</h4>
+                    <p><code>torch==2.7.0</code>, <code>transformers==4.55.0</code>, <code>accelerate==1.10.0</code>, <code>peft==0.17.0</code>, <code>trl==0.20.0</code>, <code>sentence-transformers==5.1.0</code></p>
+                </div>
+                <div class="feature-card">
+                    <h4>Vector Search</h4>
+                    <p><code>faiss-cpu==1.11.0.post1</code> (use <code>faiss-gpu</code> if you know what you're doing)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="description">
+            <h3>Notes</h3>
+            <ul>
+                <li>Outputs live under <code>output/</code> by default and are git-ignored.</li>
+                <li>For GPU installs on NVIDIA Linux/macOS/WSL2, use appropriate CUDA wheels (12.6 or 11.8).</li>
+                <li>If encountering CUDA/NCCL issues, switch to CPU-only via <code>faiss-cpu</code> and CPU PyTorch wheels.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
+
+
