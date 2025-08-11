@@ -106,11 +106,15 @@
         });
     </script>
     <!--
-        CERN Knowledge Explorer v2.0.1 Flowchart
+        CERN Knowledge Explorer v2.0.1 Flowchart (updated with chatbots)
         - Ingestion: src/ingestion/pdf_downloader.py (--limit)
-        - Processing: src/processing/vectorizer.py (PDF -> text chunks)
+        - Processing: src/processing/vector_db.py (PDF -> text chunks & vector build)
         - Vector DB: src/processing/vector_db.py (--build/--query, outputs to output/)
         - Outputs: output/cern_explorer.index, output/cern_explorer_metadata.pkl
+        - Optional Training: src/training/mistral24b_unsloth_4bit_finetune.py (--train)
+        - Chatbots:
+          * RAG + LoRA: src/chat/pdf_chatbot.py
+          * LoRA-only: src/chat/pdf_chatbot_LORA.py
     -->
     
 </head>
@@ -118,7 +122,7 @@
     <div class="container">
         <h1>CERN Knowledge Explorer v2.0.1</h1>
         <div class="version-badge">
-            <span class="badge">Ingestion ➜ Vectorization ➜ Search (Outputs in output/)</span>
+            <span class="badge">Ingestion ➜ Vectorization ➜ Search ➜ Chat</span>
         </div>
 
         <div class="description">
@@ -135,7 +139,7 @@
             <div class="mermaid">
                 graph LR
                     A["📥 Download PDFs<br/>pdf_downloader.py --limit N"] --> B
-                    B["🧩 Text Extraction & Chunking<br/>vectorizer.py"] --> C
+                    B["🧩 Text Extraction & Chunking<br/>vector_db.py (internal)"] --> C
                     C["🔢 Embedding & Index Build<br/>vector_db.py --build"] --> D
                     D["💾 Save Index & Metadata<br/>output/cern_explorer.*"] --> E
                     E["🔎 Query Index<br/>vector_db.py --query '...' --k 5"]
@@ -192,6 +196,53 @@
                     </div>
                 </div>
             </div>
+
+            <div class="component-box">
+                <div class="component-title">Optional: QLoRA Training (4-bit)</div>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>Usage</h4>
+                        <p><code>python src/training/mistral24b_unsloth_4bit_finetune.py --train</code></p>
+                        <p>Saves adapter to <code>output/adapters/mistral24b_lora</code></p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>Defaults (v2.0.1)</h4>
+                        <ul>
+                            <li>Seq len: 1024</li>
+                            <li>LoRA: <code>q_proj,v_proj</code>, r=8, alpha=16</li>
+                            <li>Env: <code>PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True</code></li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <h4>Note</h4>
+                        <p>2-bit GGUF models are inference-only; use the 4-bit Unsloth HF checkpoint for training.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="component-box">
+                <div class="component-title">Chatbots</div>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>RAG + LoRA</h4>
+                        <p><code>python src/chat/pdf_chatbot.py --once "Your question"</code></p>
+                        <p>Interactive: <code>python src/chat/pdf_chatbot.py</code></p>
+                        <ul>
+                            <li>Uses FAISS index + metadata</li>
+                            <li>Applies LoRA adapter for generation</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <h4>LoRA-only</h4>
+                        <p><code>python src/chat/pdf_chatbot_LORA.py --once "Your question"</code></p>
+                        <p>Interactive: <code>python src/chat/pdf_chatbot_LORA.py</code></p>
+                        <ul>
+                            <li>No retrieval/index</li>
+                            <li>Uses only base model + LoRA</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="section">
@@ -203,12 +254,35 @@
                     P3["vector_db.py --build"] --> P4["output/cern_explorer.index"]
                     P3 --> P5["output/cern_explorer_metadata.pkl"]
                     Q1["vector_db.py --query"] --> P4
+                    T1["mistral24b_unsloth_4bit_finetune.py --train"] --> A1["output/adapters/mistral24b_lora"]
 
                     style P1 fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
                     style P2 fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
                     style P3 fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
                     style P4,P5 fill:#fff3e0,stroke:#f57c00,stroke-width:3px
                     style Q1 fill:#c8e6c9,stroke:#4caf50,stroke-width:3px
+                    style T1 fill:#e8f5e9,stroke:#2e7d32,stroke-width:3px
+                    style A1 fill:#e8f5e9,stroke:#2e7d32,stroke-width:3px
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Chatbot Flows</h2>
+            <div class="mermaid">
+                graph LR
+                    I1["output/cern_explorer.index"] --> C1["pdf_chatbot.py (RAG + LoRA)"]
+                    I2["output/cern_explorer_metadata.pkl"] --> C1
+                    A1b["output/adapters/mistral24b_lora"] --> C1
+                    C1 --> R1["Answer"]
+
+                    A2["output/adapters/mistral24b_lora"] --> C2["pdf_chatbot_LORA.py (LoRA-only)"]
+                    C2 --> R2["Answer"]
+
+                    style C1 fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+                    style C2 fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+                    style I1,I2 fill:#fff3e0,stroke:#f57c00,stroke-width:3px
+                    style A1b,A2 fill:#e8f5e9,stroke:#2e7d32,stroke-width:3px
+                    style R1,R2 fill:#c8e6c9,stroke:#4caf50,stroke-width:3px
             </div>
         </div>
 

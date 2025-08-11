@@ -62,7 +62,27 @@ This writes `cern_explorer.index` and `cern_explorer_metadata.pkl` to `output/`.
 python src/processing/vector_db.py --query "quantum mechanics" --k 5 --out-dir ./output
 ```
 
+### 4) Optional: LoRA fine-tune the 24B model (QLoRA 4-bit)
+Prereq: ensure `./output/cern_explorer_metadata.pkl` exists (built in step 2).
+
+Run a memory-safe default training (24 GB GPU works):
+```bash
+python src/training/mistral24b_unsloth_4bit_finetune.py --train
+```
+
+Defaults in v2.0.1 when using `--train`:
+- max sequence length: 1024 (`--max-seq-len`)
+- LoRA target modules: `q_proj,v_proj` (`--lora-target-modules`)
+- LoRA rank/alpha: 8 / 16 (`--lora-r`, `--lora-alpha`)
+- Sets `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` automatically
+- Saves adapter to `./output/adapters/mistral24b_lora`
+
+Tips:
+- Reduce OOM risk by lowering `--max-seq-len` further, or switch to a smaller base model.
+- 2-bit GGUF files (e.g., `...IQ2_XXS.gguf`) are inference-only and not trainable via this script.
+
 ## Notes
 - To change the number of PDFs, pass `--limit` to `pdf_downloader.py`.
 - To change the output location for the index/metadata, pass `--out-dir` (default is `output/`).
 - If GPU is not available or CUDA is misconfigured, the system will fallback to CPU when possible.
+ - QLoRA training uses the 4-bit Unsloth HF checkpoint: `unsloth/Mistral-Small-3.2-24B-Instruct-2506-unsloth-bnb-4bit`.
